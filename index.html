@@ -26,6 +26,13 @@
             margin-left: 20px; /* Keeps it slightly off the edge */
         }
         .step { margin: 0 20px 100vh 20px; opacity: 0.1; transition: opacity 0.5s ease; pointer-events: all; }
+        /* Special centering for Step 0 */
+        .step-intro {{
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto 100vh auto;
+            padding-top: 30vh;
+        }}
         .step.active { opacity: 1; }
         .step-content {
             background: rgba(15, 15, 15, 0.9); 
@@ -60,6 +67,14 @@
 </div>
 
 <div id="map"></div>
+
+<div id="step-0" class="step step-intro active">
+        <div class="step-content" style="text-align: center;">
+            <h2 style="font-size: 2.5rem; line-height: 1.1;">Tracking the Wisconsin <br>ICE Pipeline</h2>
+            <p>Every year, thousands of immigrants pass through a network of county jails and federal facilities in Wisconsin. Using ICE detention records from 2025, we recreated the journeys of those held in the state to visualize where they come from—and where the system eventually sends them.</p>
+            <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #FF9F1C; margin-top: 20px;">Scroll to Begin</p>
+        </div>
+</div>
 
 <div id="features">
     <div id="step-1" class="step active">
@@ -219,7 +234,7 @@
             "type": "symbol",
             "source": "territory",
             "layout": {
-                "text-field": "5TH CIRCUIT COURT OF APPEALS",
+                "text-field": "FIFTH CIRCUIT JURISDICTION",
                 "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
                 "text-size": 14,
                 "text-letter-spacing": 0.2,
@@ -313,6 +328,7 @@
         // --- END TOOLTIP LOGIC ---
 
         const steps = {
+            'step-0': {{ center: [-95, 38], zoom: 3.5, m_type: 'none', c_opacity: 0 }},
             'step-1': { center: [-89.5, 39], zoom: 3.8, m_type: 'into_wisconsin', c_opacity: 0 },
             'step-2': { center: [-89.5, 44], zoom: 6.2, m_type: 'into_wisconsin', c_opacity: 0 },
             'step-4': { center: [-98, 39], zoom: 3.8, m_type: 'out_of_wisconsin', c_opacity: 0 },
@@ -328,6 +344,16 @@
                     const config = steps[stepId];
 
                     map.flyTo({ center: config.center, zoom: config.zoom, duration: 2000 });
+                    // Hide everything for Step 0
+                    const opacity = stepId === 'step-0' ? 0 : 0.8;
+                    
+                    if (stepId !== 'step-5' && stepId !== 'step-6' && stepId !== 'step-7') {{
+                        map.setPaintProperty('movement-lines', 'line-opacity', opacity);
+                        map.setPaintProperty('facility-points', 'circle-opacity', opacity);
+                        if (config.m_type !== 'none') {{
+                            map.setFilter('movement-lines', ["==", "movement_type", config.m_type]);
+                        }}
+                    }}
                     map.setPaintProperty('circuit-outline', 'line-opacity', config.c_opacity);
 
                     if (stepId === 'step-5') {
