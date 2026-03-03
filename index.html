@@ -20,10 +20,11 @@
             z-index: 2; 
             width: 100%; /* Full width to allow Step 0 to center */
             pointer-events: none; 
+            padding-bottom: 10vh;
         }
 
         .step { 
-            margin: 0 auto 100vh auto; 
+            margin: 0 auto 100vh auto; /* Keep the gap between steps */
             opacity: 0.1; 
             transition: opacity 0.5s ease; 
             pointer-events: all; 
@@ -65,6 +66,10 @@
             display: flex;
             flex-direction: column;
             align-items: stretch;
+        }
+
+        .step:last-child {
+            margin-bottom: 5vh; 
         }
         
         h2 { font-family: 'Libre Franklin', sans-serif; color: #FF9F1C; text-transform: uppercase; margin-top: 0; }
@@ -411,7 +416,7 @@
                     entry.target.classList.add('active');
                 }
             });
-        }, { threshold: 0.6 });
+        }, { threshold: 0.3 });
 
         document.querySelectorAll('.step').forEach(step => observer.observe(step));
     });
