@@ -16,34 +16,41 @@
         a:hover { opacity: 0.8; }
         #map { position: fixed; top: 0; width: 100vw; height: 100vh; z-index: 1; }
         #features { 
-            position: relative; 
-            z-index: 2; 
-            width: 45%; 
-            max-width: 500px; /* Prevents text from becoming too wide on desktop */
-            padding-top: 60vh; 
-            padding-bottom: 20vh; /* Reduced from 80vh to fix the bottom "dead space" */
-            pointer-events: none; 
-            margin-left: 20px; /* Keeps it slightly off the edge */
+        position: relative; 
+        z-index: 2; 
+        width: 100%; /* Changed to 100% to allow centering */
+        pointer-events: none; 
         }
-        .step { margin: 0 20px 100vh 20px; opacity: 0.1; transition: opacity 0.5s ease; pointer-events: all; }
-        /* Special centering for Step 0 */
-        .step-intro {{
+    
+        .step { 
+            margin: 0 auto 100vh auto; 
+            opacity: 0.1; 
+            transition: opacity 0.8s ease; 
+            pointer-events: all;
+            width: 45%; 
+            max-width: 500px;
+        }
+    
+        /* Centering logic for Step 0 */
+        .step-intro {
             width: 90%;
             max-width: 800px;
-            margin: 0 auto 100vh auto;
-            padding-top: 30vh;
-        }}
+            padding-top: 35vh; /* Pushes it down to the middle */
+        }
+    
+        /* Normal steps stay on the left */
+        .step:not(.step-intro) {
+            margin-left: 5%;
+        }
+    
         .step.active { opacity: 1; }
+    
         .step-content {
             background: rgba(15, 15, 15, 0.9); 
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1); 
             padding: 2.5rem 2rem; 
             border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            pointer-events: all; /* Ensures links/charts remain interactive */
         }
         h2 { font-family: 'Libre Franklin', sans-serif; color: #FF9F1C; text-transform: uppercase; margin-top: 0; }
         p, li { font-family: 'Lora', serif; font-size: 1.15rem; line-height: 1.7; color: #e0e0e0; }
@@ -68,15 +75,15 @@
 
 <div id="map"></div>
 
-<div id="step-0" class="step step-intro active">
+<div id="features">
+    <div id="step-0" class="step step-intro active">
         <div class="step-content" style="text-align: center;">
-            <h2 style="font-size: 2.5rem; line-height: 1.1;">Tracking the Wisconsin <br>ICE Pipeline</h2>
-            <p>More than <b>1300</b> ICE detainees passed through Wisconsin between January and October 2025. Most have since been deported.</b></p>
+            <h2 style="font-size: 2.5rem; line-height: 1.1;">Tracking the Wisconsin ICE Pipeline</h2>
+            <p>More than <b>1300</b> ICE detainees passed through Wisconsin between January and October 2025. Most have since been deported.</p>
             <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #FF9F1C; margin-top: 20px;">Scroll to Begin</p>
         </div>
-</div>
+    </div>
 
-<div id="features">
     <div id="step-1" class="step active">
         <div class="step-content">
             <h2>Most ICE detainees held in Wisconsin last year were arrested within the state, but hundreds more arrived from elsewhere.</h2>
@@ -328,7 +335,7 @@
         // --- END TOOLTIP LOGIC ---
 
         const steps = {
-            'step-0': {{ center: [-95, 38], zoom: 3.5, m_type: 'none', c_opacity: 0 }},
+            'step-0': { center: [-95, 38], zoom: 3.5, m_type: 'none', c_opacity: 0 },
             'step-1': { center: [-89.5, 39], zoom: 3.8, m_type: 'into_wisconsin', c_opacity: 0 },
             'step-2': { center: [-89.5, 44], zoom: 6.2, m_type: 'into_wisconsin', c_opacity: 0 },
             'step-4': { center: [-98, 39], zoom: 3.8, m_type: 'out_of_wisconsin', c_opacity: 0 },
@@ -342,47 +349,52 @@
                 if (entry.isIntersecting) {
                     const stepId = entry.target.id;
                     const config = steps[stepId];
-
-                    map.flyTo({ center: config.center, zoom: config.zoom, duration: 2000 });
-                    // Hide everything for Step 0
-                    const opacity = stepId === 'step-0' ? 0 : 0.8;
-                    
-                    if (stepId !== 'step-5' && stepId !== 'step-6' && stepId !== 'step-7') {{
-                        map.setPaintProperty('movement-lines', 'line-opacity', opacity);
-                        map.setPaintProperty('facility-points', 'circle-opacity', opacity);
-                        if (config.m_type !== 'none') {{
-                            map.setFilter('movement-lines', ["==", "movement_type", config.m_type]);
-                        }}
-                    }}
+        
+                    // 1. Move the camera
+                    map.flyTo({ 
+                        center: config.center, 
+                        zoom: config.zoom, 
+                        duration: 2000 
+                    });
+        
+                    // 2. Clear visual state for the current step
+                    // We turn off the circuit label and outline by default
+                    map.setPaintProperty('circuit-label', 'text-opacity', 0);
                     map.setPaintProperty('circuit-outline', 'line-opacity', config.c_opacity);
-
-                    if (stepId === 'step-5') {
-                        map.setPaintProperty('circuit-label', 'text-opacity', 0.8);
-                        map.setPaintProperty('facility-points', 'circle-opacity', 0);
-                        map.setPaintProperty('facility-points', 'circle-stroke-opacity', 0);
-                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0.8);
-                        map.setPaintProperty('weighted-bubbles', 'circle-stroke-opacity', 0.8);
+        
+                    // 3. Logic Branching
+                    if (stepId === 'step-0') {
+                        // INTRO: Hide everything
                         map.setPaintProperty('movement-lines', 'line-opacity', 0);
-                    } 
-                    else if (stepId === 'step-6' || stepId === 'step-7') {    
-                        // This block now handles both Step 6 and the Restart box (Step 7)
-                        map.setPaintProperty('circuit-label', 'text-opacity', 0.8);
-                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0.15);
                         map.setPaintProperty('facility-points', 'circle-opacity', 0);
-                        map.setPaintProperty('movement-lines', 'line-opacity', 0);
-                    }
-                    else {
                         map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0);
-                        map.setPaintProperty('weighted-bubbles', 'circle-stroke-opacity', 0);
-
-                        map.setFilter('movement-lines', ["==", "movement_type", config.m_type]);
-                        map.setFilter('facility-points', ["in", config.m_type, ["get", "movement_categories"]]);
+                    } 
+                    else if (stepId === 'step-5' || stepId === 'step-6' || stepId === 'step-7') {
+                        // FINAL STOPS: Show bubbles and circuit label
+                        map.setPaintProperty('movement-lines', 'line-opacity', 0);
+                        map.setPaintProperty('facility-points', 'circle-opacity', 0);
+                        map.setPaintProperty('circuit-label', 'text-opacity', 0.8);
                         
-                        map.setPaintProperty('movement-lines', 'line-opacity', 0.8);
-                        map.setPaintProperty('facility-points', 'circle-opacity', 0.8);
-                        map.setPaintProperty('facility-points', 'circle-stroke-opacity', 0.8);
+                        // Step 5 is the "big reveal" for bubbles; 6 and 7 dim them
+                        const bubbleOpacity = (stepId === 'step-5') ? 0.8 : 0.15;
+                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', bubbleOpacity);
+                        map.setPaintProperty('weighted-bubbles', 'circle-stroke-opacity', bubbleOpacity);
+                    } 
+                    else {
+                        // DATA STEPS (1, 2, 4): Show lines and points
+                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0);
+                        
+                        if (config.m_type !== 'none') {
+                            map.setFilter('movement-lines', ["==", "movement_type", config.m_type]);
+                            map.setFilter('facility-points', ["in", config.m_type, ["get", "movement_categories"]]);
+                            
+                            map.setPaintProperty('movement-lines', 'line-opacity', 0.8);
+                            map.setPaintProperty('facility-points', 'circle-opacity', 0.8);
+                            map.setPaintProperty('facility-points', 'circle-stroke-opacity', 0.8);
+                        }
                     }
-
+        
+                    // 4. Update CSS classes for fading text boxes
                     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
                     entry.target.classList.add('active');
                 }
