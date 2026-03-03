@@ -11,59 +11,69 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Libre+Franklin:wght@700;900&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; padding: 0; background: #000; color: white; overflow-x: hidden; }
-        /* FIX FOR HYPERLINK COLOR */
         a { color: #ffffff; text-decoration: underline; transition: opacity 0.2s; }
         a:hover { opacity: 0.8; }
         #map { position: fixed; top: 0; width: 100vw; height: 100vh; z-index: 1; }
+        
         #features { 
-        position: relative; 
-        z-index: 2; 
-        width: 100%; /* Changed to 100% to allow centering */
-        pointer-events: none; 
+            position: relative; 
+            z-index: 2; 
+            width: 100%; /* Full width to allow Step 0 to center */
+            pointer-events: none; 
         }
-    
+
         .step { 
             margin: 0 auto 100vh auto; 
             opacity: 0.1; 
-            transition: opacity 0.8s ease; 
-            pointer-events: all;
+            transition: opacity 0.5s ease; 
+            pointer-events: all; 
             width: 45%; 
-            max-width: 500px;
+            max-width: 500px; 
         }
-    
-        /* Centering logic for Step 0 */
-        .step-intro {
-            width: 90%;
-            max-width: 800px;
-            padding-top: 35vh; /* Pushes it down to the middle */
+
+        /* --- STEP 0: FULL SCREEN CENTERED --- */
+        #step-0 { 
+            width: 100vw; 
+            max-width: 100%; 
+            height: 100vh; /* Takes up the full viewport */
+            display: flex;
+            align-items: center; /* Vertical Center */
+            justify-content: center; /* Horizontal Center */
+            margin: 0; 
+            padding-top: 0;
         }
-    
-        /* Normal steps stay on the left */
-        .step:not(.step-intro) {
-            margin-left: 5%;
+
+        #step-0 .step-content {
+            max-width: 700px;
+            text-align: center;
         }
-    
+
+        /* --- OTHER STEPS: LEFT ALIGNED --- */
+        .step:not(#step-0) {
+            margin-left: 20px;
+            padding-top: 60vh; /* Pushes narrative text down for scrolly effect */
+        }
+
         .step.active { opacity: 1; }
-    
+        
         .step-content {
             background: rgba(15, 15, 15, 0.9); 
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1); 
             padding: 2.5rem 2rem; 
             border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
         }
+        
         h2 { font-family: 'Libre Franklin', sans-serif; color: #FF9F1C; text-transform: uppercase; margin-top: 0; }
         p, li { font-family: 'Lora', serif; font-size: 1.15rem; line-height: 1.7; color: #e0e0e0; }
         .stat-highlight { color: #FF9F1C; font-weight: bold; }
+        
         #header {
             position: fixed; top: 0; left: 0; width: 100%; z-index: 10;
             padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-        }
-        #step-1 ul li {
-            font-size: 0.95rem; /* Reduced from 1.15rem */
-            line-height: 1.4;    /* Tighter spacing for a technical list feel */
-            color: #ccc;         /* Slightly muted white to separate it from prose */
-            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -76,14 +86,14 @@
 <div id="map"></div>
 
 <div id="features">
-    <div id="step-0" class="step step-intro active">
-        <div class="step-content" style="text-align: center;">
-            <h2 style="font-size: 2.5rem; line-height: 1.1;">Tracking the Wisconsin ICE Pipeline</h2>
-            <p>More than <b>1300</b> ICE detainees passed through Wisconsin between January and October 2025. Most have since been deported.</p>
-            <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #FF9F1C; margin-top: 20px;">Scroll to Begin</p>
+    <div id="step-0" class="step active">
+        <div class="step-content">
+            <p>Between January and October 2025, more than <span class="stat-highlight">1,300</span> immigrants passed through Wisconsin while in ICE custody. Most are no longer in the country.</p>
+            <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; color: #FF9F1C; margin-top: 30px; font-weight: bold;">
+                Scroll to Begin
+            </p>
         </div>
     </div>
-
     <div id="step-1" class="step active">
         <div class="step-content">
             <h2>Most ICE detainees held in Wisconsin last year were arrested within the state, but hundreds more arrived from elsewhere.</h2>
@@ -103,14 +113,14 @@
     <div id="step-5" class="step"><div class="step-content">
         <h2>Final Stops</h2>
         <p>But detention facilities in the jurisdiction of the U.S. Court of Appeals for the Fifth Circuit are often the final stop for immigrants facing deportation, including those who passed through Wisconsin last year. The Fifth District Court sided with the Trump administration's policy prohibiting bond hearings for most detained immigrants in February.</p>
-        <p><span class="stat-highlight">648</span> immigrant (<span class="stat-highlight">46.8%</span>) who passed through Wisconsin last appeared in ICE detention records within the Fifth Circuit's jurisdiction.</p>
+        <p><span class="stat-highlight">648</span> immigrants (<span class="stat-highlight">46.8%</span>) who passed through Wisconsin last appeared in ICE detention records within the Fifth Circuit's jurisdiction.</p>
     </div></div>
     <div id="step-6" class="step"><div class="step-content">
         <h2>The Exit</h2>
         <p>Of the <span class="stat-highlight">1386</span> immigrants who passed through Wisconsin while in ICE custody last year, <span class="stat-highlight">70.1%</span> were removed from the U.S through deportation or "voluntary departure."</p>
         <ul style="list-style: none; padding: 0; color: #e0e0e0; font-family: 'Lora'; font-size: 1.1rem;">
-            <li style="margin-bottom: 8px;"><span style="color:#eeeeee; margin-right: 8px;">●</span> <strong>Deported:</strong> 843</li>
-            <li style="margin-bottom: 8px;"><span style="color:#eeeeee; margin-right: 8px;">●</span> <strong>Voluntary Departure:</strong> 129</li>
+            <li style="margin-bottom: 8px;"><span style="color:#eeeee; margin-right: 8px;">●</span> <strong>Deported:</strong> 843</li>
+            <li style="margin-bottom: 8px;"><span style="color:#eeeee; margin-right: 8px;">●</span> <strong>Voluntary Departure:</strong> 129</li>
         </ul>
         <p><span class="stat-highlight">20.3%</span> of those immigrants had <strong>neither past criminal convictions nor pending criminal charges</strong>.</p>
     </div></div>
@@ -210,7 +220,7 @@
         }
     });
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoicGtpZWZlciIsImEiOiJjbW1hczFudHAwZ3JqMnFva3hrbXB6enI3In0.Y2N-AEzfY3q2qaYE5ShzEw';
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGtpZWZlciIsImEiOiJjbWxqeWRsNzMwNHV5M3FweTMyemY5emQzIn0.iPzQxYOu7uNUkophKSfiLA';
     
     const map = new mapboxgl.Map({
         container: 'map',
@@ -241,7 +251,7 @@
             "type": "symbol",
             "source": "territory",
             "layout": {
-                "text-field": "FIFTH CIRCUIT JURISDICTION",
+                "text-field": "5TH CIRCUIT COURT OF APPEALS",
                 "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
                 "text-size": 14,
                 "text-letter-spacing": 0.2,
@@ -344,57 +354,39 @@
             'step-7': { center: [-97, 33], zoom: 4.8, m_type: 'post_wisconsin', c_opacity: 0.2 }
         };
 
-        const observer = new IntersectionObserver((entries) => {
+       const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const stepId = entry.target.id;
                     const config = steps[stepId];
-        
-                    // 1. Move the camera
-                    map.flyTo({ 
-                        center: config.center, 
-                        zoom: config.zoom, 
-                        duration: 2000 
-                    });
-        
-                    // 2. Clear visual state for the current step
-                    // We turn off the circuit label and outline by default
-                    map.setPaintProperty('circuit-label', 'text-opacity', 0);
+
+                    map.flyTo({ center: config.center, zoom: config.zoom, duration: 2000 });
                     map.setPaintProperty('circuit-outline', 'line-opacity', config.c_opacity);
-        
-                    // 3. Logic Branching
+
+                    // NEW: Step 0 Logic to hide everything
                     if (stepId === 'step-0') {
-                        // INTRO: Hide everything
                         map.setPaintProperty('movement-lines', 'line-opacity', 0);
                         map.setPaintProperty('facility-points', 'circle-opacity', 0);
                         map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0);
-                    } 
-                    else if (stepId === 'step-5' || stepId === 'step-6' || stepId === 'step-7') {
-                        // FINAL STOPS: Show bubbles and circuit label
-                        map.setPaintProperty('movement-lines', 'line-opacity', 0);
-                        map.setPaintProperty('facility-points', 'circle-opacity', 0);
-                        map.setPaintProperty('circuit-label', 'text-opacity', 0.8);
-                        
-                        // Step 5 is the "big reveal" for bubbles; 6 and 7 dim them
-                        const bubbleOpacity = (stepId === 'step-5') ? 0.8 : 0.15;
-                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', bubbleOpacity);
-                        map.setPaintProperty('weighted-bubbles', 'circle-stroke-opacity', bubbleOpacity);
-                    } 
-                    else {
-                        // DATA STEPS (1, 2, 4): Show lines and points
-                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0);
-                        
-                        if (config.m_type !== 'none') {
-                            map.setFilter('movement-lines', ["==", "movement_type", config.m_type]);
-                            map.setFilter('facility-points', ["in", config.m_type, ["get", "movement_categories"]]);
-                            
-                            map.setPaintProperty('movement-lines', 'line-opacity', 0.8);
-                            map.setPaintProperty('facility-points', 'circle-opacity', 0.8);
-                            map.setPaintProperty('facility-points', 'circle-stroke-opacity', 0.8);
-                        }
                     }
-        
-                    // 4. Update CSS classes for fading text boxes
+                    else if (stepId === 'step-5') {
+                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0.8);
+                        map.setPaintProperty('movement-lines', 'line-opacity', 0);
+                        map.setPaintProperty('facility-points', 'circle-opacity', 0);
+                    } 
+                    else if (stepId === 'step-6' || stepId === 'step-7') {    
+                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0.15);
+                        map.setPaintProperty('movement-lines', 'line-opacity', 0);
+                        map.setPaintProperty('facility-points', 'circle-opacity', 0);
+                    }
+                    else {
+                        map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0);
+                        map.setFilter('movement-lines', ["==", "movement_type", config.m_type]);
+                        map.setFilter('facility-points', ["in", config.m_type, ["get", "movement_categories"]]);
+                        map.setPaintProperty('movement-lines', 'line-opacity', 0.8);
+                        map.setPaintProperty('facility-points', 'circle-opacity', 0.8);
+                    }
+
                     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
                     entry.target.classList.add('active');
                 }
