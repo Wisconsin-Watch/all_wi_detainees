@@ -521,7 +521,7 @@
                     entry.target.classList.add('active');
                 }
             });
-        }, { threshold: 0.6 });
+        }, { threshold: 0.2, rootMargin: "-30% 0px -30% 0px" });
 
         document.querySelectorAll('.step').forEach(step => observer.observe(step));
     });
