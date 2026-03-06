@@ -468,13 +468,13 @@
                     } else {
                         legend.style.display = 'block';
                         let content = '';
-                        if (stepId === 'step-1a' || stepId === 'step-1b' || stepId === 'step-2') {
+                        if (stepId === 'step-1-a' || stepId === 'step-1-b' || stepId === 'step-2') {
                             content = `
                                 <div class="legend-item"><span class="legend-line" style="background:#A2D2FF;"></span> Transfers into Wisconsin facilities</div>
                                 <div class="legend-item"><span class="legend-key" style="background:#ffffff; border:1px solid #555;"></span>ICE detention facility</div>`;
                         } else if (stepId === 'step-4') {
                             content = `<div class="legend-item"><span class="legend-line" style="background:#4361EE;"></span> Outbound from Wisconsin</div>`;
-                        } else if (stepId === 'step-5a' || stepId === 'step-5b' || stepId === 'step-6') {
+                        } else if (stepId === 'step-5-a' || stepId === 'step-5-b' || stepId === 'step-6') {
                             content = `<div class="legend-item"><span class="legend-key" style="background:#FF9F1C;"></span> Final Recorded Stop (Scale reflects number of former Wisconsin detainees last recorded at a given facility)</div>`;
                         }
                         document.getElementById('legend').innerHTML = content;
@@ -487,7 +487,7 @@
                         map.setPaintProperty('facility-points', 'circle-stroke-opacity', 0);
                         map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0);
                     }
-                    else if (stepId === 'step-5a' || stepId === 'step-5b') {
+                    else if (stepId === 'step-5-a' || stepId === 'step-5-b') {
                         map.setPaintProperty('weighted-bubbles', 'circle-opacity', 0.8);
                         map.setPaintProperty('movement-lines', 'line-opacity', 0);
                         map.setPaintProperty('facility-points', 'circle-opacity', 0);
